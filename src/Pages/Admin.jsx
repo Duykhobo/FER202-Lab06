@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../config";
 
 export default function Admin() {
    
@@ -19,7 +20,7 @@ export default function Admin() {
     useEffect(() => {
         const fetchOrchids = async () => {
             try {
-                const response = await fetch("https://6a48af3aa033dcb98d64ca87.mockapi.io/an1904/orchid/Orchids");
+                const response = await fetch(API_URL);
                 if (!response.ok) throw new Error("Failed to fetch orchids");
                 const data = await response.json();
                 setOrchids(data);
@@ -44,7 +45,7 @@ export default function Admin() {
         try {
             if (editingId) {
                 
-                const response = await fetch(`https://6a48af3aa033dcb98d64ca87.mockapi.io/an1904/orchid/Orchids/${editingId}`, {
+                const response = await fetch(`${API_URL}/${editingId}`, {
                     method: 'PUT', // Dùng PUT để cập nhật
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newOrchid) 
@@ -60,7 +61,7 @@ export default function Admin() {
 
             } else {
                 
-                const response = await fetch("https://6a48af3aa033dcb98d64ca87.mockapi.io/an1904/orchid/Orchids", {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newOrchid) 
@@ -85,7 +86,7 @@ export default function Admin() {
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa cây hoa lan này không?")) {
             try {
-                const response = await fetch(`https://6a48af3aa033dcb98d64ca87.mockapi.io/an1904/orchid/Orchids/${id}`, {
+                const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE',
                 });
 

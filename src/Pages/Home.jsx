@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
+import { API_URL } from "../config"
 
 export default function Home() {
 
@@ -10,7 +11,7 @@ export default function Home() {
     useEffect(() => {
         const fetchOrchids = async () => {
             try {
-                const response = await fetch("https://6a48af3aa033dcb98d64ca87.mockapi.io/an1904/orchid/Orchids")
+                const response = await fetch(API_URL)
                 if (!response.ok) throw new Error("Failed to fetch")
                 const data = await response.json()
                 setOrchids(data)

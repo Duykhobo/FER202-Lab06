@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react"
 import {useParams} from "react-router-dom"
+import { API_URL } from "../config"
 
 export default function Detail(){
     const {id} = useParams()
@@ -10,7 +11,7 @@ export default function Detail(){
     useEffect(() => {
         const fetchProduct = async() => {
             try{
-                const response = await fetch(`https://6a48af3aa033dcb98d64ca87.mockapi.io/an1904/orchid/Orchids/${id}`)
+                const response = await fetch(`${API_URL}/${id}`)
                 if(!response.ok) throw new Error("Failed to fetch product")
                     const data =  await response.json()
                     setProduct(data)
