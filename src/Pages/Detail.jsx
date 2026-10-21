@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react"
 import {useParams} from "react-router-dom"
-import { API_URL } from "../config"
+import { getOrchidById } from "../services/orchidService"
 
 export default function Detail(){
     const {id} = useParams()
@@ -11,10 +11,8 @@ export default function Detail(){
     useEffect(() => {
         const fetchProduct = async() => {
             try{
-                const response = await fetch(`${API_URL}/${id}`)
-                if(!response.ok) throw new Error("Failed to fetch product")
-                    const data =  await response.json()
-                    setProduct(data)
+                const data = await getOrchidById(id)
+                setProduct(data)
             }catch(err){
                 setError(err.message)
             } finally {

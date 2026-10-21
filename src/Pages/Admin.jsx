@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { API_URL } from "../config";
+import { getOrchids, createOrchid, updateOrchid, deleteOrchid } from "../services/orchidService";
 
 export default function Admin() {
    
@@ -20,9 +20,7 @@ export default function Admin() {
     useEffect(() => {
         const fetchOrchids = async () => {
             try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error("Failed to fetch orchids");
-                const data = await response.json();
+                const data = await getOrchids();
                 setOrchids(data);
             } catch (err) {
                 setError(err.message);
@@ -44,37 +42,16 @@ export default function Admin() {
 
         try {
             if (editingId) {
-                
-                const response = await fetch(`${API_URL}/${editingId}`, {
-                    method: 'PUT', // Dùng PUT để cập nhật
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newOrchid) 
-                });
-
-                if (!response.ok) throw new Error("Cập nhật thất bại!");
-                const updatedData = await response.json();
-                
-                
+                const updatedData = await updateOrchid(editingId, newOrchid);
                 setOrchids(orchids.map((orchid) => (orchid.id === editingId ? updatedData : orchid)));
                 setEditingId(null); // Thoát khỏi chế độ sửa
                 alert("Đã cập nhật thành công!");
-
             } else {
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newOrchid) 
-                });
-
-                if (!response.ok) throw new Error("Thêm thất bại!");
-                const data = await response.json();
-                
-                setOrchids([...orchids, data]);
+                const data = await createOrchid(newOrchid);
+                setOrchids([data, ...orchids]);
                 alert("Đã thêm hoa lan thành công!");
             }
 
-            
             setNewOrchid({ name: "", image: "", price: "", description: "" });
 
         } catch (err) {
@@ -86,13 +63,7 @@ export default function Admin() {
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa cây hoa lan này không?")) {
             try {
-                const response = await fetch(`${API_URL}/${id}`, {
-                    method: 'DELETE',
-                });
-
-                if (!response.ok) throw new Error("Xóa thất bại!");
-
-               
+                await deleteOrchid(id);
                 setOrchids(orchids.filter((orchid) => orchid.id !== id));
                 alert("Đã xóa thành công!");
             } catch (err) {
