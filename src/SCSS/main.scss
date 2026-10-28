@@ -1,0 +1,12 @@
+// Master SCSS Entry File (Lab 5 - CSS Preprocessors)
+// Tự động compile và tổng hợp toàn bộ modules SCSS
+@use "variables";
+@use "mixins";
+@use "base";
+@use "navbar";
+@use "cards";
+@use "modal";
+@use "admin";
+@use "about";
+@use "contact";
+@use "toast";

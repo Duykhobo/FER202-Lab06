@@ -1,0 +1,63 @@
+// Mixins SCSS (Anti-Slop Clean Utilities)
+@use "variables" as *;
+
+// Flexbox shortcut
+@mixin flex($justify: flex-start, $align: center, $direction: row, $gap: 0) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $align;
+  flex-direction: $direction;
+  @if $gap != 0 {
+    gap: $gap;
+  }
+}
+
+// Responsive media queries
+@mixin responsive($breakpoint) {
+  @if $breakpoint == sm {
+    @media (max-width: 640px) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: 768px) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: 1024px) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: 1280px) { @content; }
+  }
+}
+
+// Truncate text single / multi line
+@mixin truncate-lines($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Clean flat button mixin (No gradient, no drop shadows at rest)
+@mixin button-base($bg, $color, $hover-bg) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: $bg;
+  color: $color;
+  font-family: $font-sans;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: $radius-sm;
+  border: none;
+  cursor: pointer;
+  transition: $transition-bg, $transition-transform;
+  text-decoration: none;
+
+  &:hover {
+    background-color: $hover-bg;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

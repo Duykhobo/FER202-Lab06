@@ -1,0 +1,40 @@
+// Design System Variables (Anti-Slop Botanical Heritage Direction)
+$font-serif: 'Playfair Display', Georgia, serif;
+$font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+// Palette - Flat, Grounded Botanical Earth Tones
+$ground: #fbfbfa;
+$surface: #ffffff;
+$surface-alt: #f3f2ee;
+$surface-subtle: #eae8e1;
+
+$ink: #141b16;
+$ink-muted: #59655d;
+$ink-subtle: #87928b;
+
+$primary: #1e4632;
+$primary-hover: #153424;
+$primary-light: #edf3ef;
+
+$secondary: #2c5282;
+$secondary-light: #ebf3fa;
+
+$accent: #8c5d31; // Warm bronze / earth ochre
+$accent-light: #f7f2eb;
+
+$danger: #a12c2c;
+$danger-light: #faecec;
+
+$border-color: #e5e2d8;
+$border-light: #f0ede5;
+
+// Radii: Architectural, crisp, understated
+$radius-xs: 2px;
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+
+// Explicit property transitions
+$transition-transform: transform 0.2s ease;
+$transition-opacity: opacity 0.2s ease;
+$transition-bg: background-color 0.2s ease, border-color 0.2s ease;

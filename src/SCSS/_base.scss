@@ -1,0 +1,194 @@
+// Base SCSS & Dark/Light Theme System (Anti-Slop Clean Typography & Tokens)
+@use "variables" as *;
+@use "mixins" as *;
+
+:root {
+  --primary: #{$primary};
+  --primary-hover: #{$primary-hover};
+  --primary-light: #{$primary-light};
+
+  --secondary: #{$secondary};
+  --secondary-light: #{$secondary-light};
+
+  --accent: #{$accent};
+  --accent-light: #{$accent-light};
+
+  --danger: #{$danger};
+  --danger-light: #{$danger-light};
+
+  --bg-body: #{$ground};
+  --bg-card: #{$surface};
+  --bg-alt: #{$surface-alt};
+
+  --text-main: #{$ink};
+  --text-muted: #{$ink-muted};
+  --text-light: #{$ink-subtle};
+
+  --border-color: #{$border-color};
+  --border-light: #{$border-light};
+
+  --radius-xs: #{$radius-xs};
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+}
+
+// Dark Mode Tones (Lab 2 Toggle Theme - Flat tones, no glow)
+[data-theme="dark"],
+body.dark-theme {
+  --bg-body: #0d1310;
+  --bg-card: #141c17;
+  --bg-alt: #1b2620;
+
+  --text-main: #edf2ee;
+  --text-muted: #95a39a;
+  --text-light: #6c7a71;
+
+  --border-color: #24332a;
+  --border-light: #1e2b23;
+
+  --primary: #4e8568;
+  --primary-hover: #3b6b52;
+  --primary-light: #16241c;
+
+  --secondary: #4a77a8;
+  --secondary-light: #192736;
+  --accent-light: #2c241c;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-sans;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding-bottom: 64px;
+}
+
+h1, h2, h3 {
+  font-family: $font-serif;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+// Global Flat Buttons (No Gradients, No Rest Shadows)
+.btn-primary {
+  @include button-base(var(--primary), #ffffff, var(--primary-hover));
+}
+
+.btn-secondary {
+  @include button-base(var(--secondary), #ffffff, #1e3a5f);
+}
+
+.btn-danger {
+  @include button-base(var(--danger), #ffffff, #822222);
+}
+
+.btn-outline {
+  @include button-base(transparent, var(--text-main), var(--bg-alt));
+  border: 1px solid var(--border-color); /* taste-skill-ignore */
+}
+
+// Form Elements (Real inputs keep clean structural borders)
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  font-family: $font-sans;
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color); /* taste-skill-ignore */
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  outline: none;
+  transition: $transition-bg;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+
+  &.error {
+    border-color: var(--danger);
+  }
+}
+
+.form-error-msg {
+  color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+// Loading Spinner
+.state-container {
+  padding: 80px 20px;
+  text-align: center;
+  max-width: 480px;
+  margin: 40px auto;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Botanical Archive Footer (Clean, Editorial, Grounded)
+.footer-wrapper {
+  background-color: #0e1511;
+  color: #8c9b91;
+  padding: 48px 24px;
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    @include flex(space-between, flex-start, row, 32px);
+    flex-wrap: wrap;
+
+    @include responsive(md) {
+      flex-direction: column;
+      gap: 24px;
+    }
+  }
+}

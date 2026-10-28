@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Home from "./Pages/Home";
+import Natural from "./Pages/Natural";
 import Admin from "./Pages/Admin";
 import About from "./Pages/About";
 import Contact from "./Pages/Contact";
@@ -7,10 +9,11 @@ import Detail from "./Pages/Detail";
 import Navbar from "./Pages/Navbar";
 import Login from "./Pages/login";
 
+// ProtectedRoute kiểm tra quyền qua Redux Auth & localStorage (Lab 6)
 const ProtectedRoute = ({ children }) => {
-  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  const { isAuthenticated, isAdmin } = useSelector((state) => state.auth);
 
-  if (!isAdmin) {
+  if (!isAuthenticated || !isAdmin) {
     return <Navigate to="/login" replace />;
   }
   return children;
@@ -23,6 +26,7 @@ function App() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/natural" element={<Natural />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/detail/:id" element={<Detail />} />
@@ -35,25 +39,29 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
       <footer className="footer-wrapper">
         <div className="footer-container">
           <div>
-            <span style={{ fontWeight: 700, color: "#ffffff", fontSize: "1.05rem" }}>🌸 Orchids Haven</span>
-            <p style={{ marginTop: "4px", fontSize: "0.85rem" }}>
-              Hệ thống quản lý và chia sẻ kiến thức về các loài hoa lan quý hiếm.
+            <div style={{ fontWeight: 700, color: "#ffffff", fontSize: "1.1rem", fontFamily: "var(--font-serif)" }}>
+              Orchids Haven Archive
+            </div>
+            <p style={{ marginTop: "6px", fontSize: "0.85rem", maxWidth: "420px" }}>
+              Hệ sinh thái lưu trữ và quản lý 16 loài phong lan quý hiếm. Đồ án môn FER202 - Đại học FPT.
             </p>
           </div>
-          <div style={{ display: "flex", gap: "20px" }}>
-            <Link to="/" style={{ color: "#94a3b8", textDecoration: "none" }}>Trang Chủ</Link>
-            <Link to="/about" style={{ color: "#94a3b8", textDecoration: "none" }}>Giới Thiệu</Link>
-            <Link to="/contact" style={{ color: "#94a3b8", textDecoration: "none" }}>Liên Hệ</Link>
-            <Link to="/admin" style={{ color: "#94a3b8", textDecoration: "none" }}>Quản Trị</Link>
+          <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+            <Link to="/" style={{ color: "#8c9b91", textDecoration: "none" }}>Trang Chủ</Link>
+            <Link to="/natural" style={{ color: "#8c9b91", textDecoration: "none" }}>Lan Tự Nhiên</Link>
+            <Link to="/about" style={{ color: "#8c9b91", textDecoration: "none" }}>Giới Thiệu</Link>
+            <Link to="/contact" style={{ color: "#8c9b91", textDecoration: "none" }}>Liên Hệ</Link>
+            <Link to="/admin" style={{ color: "#8c9b91", textDecoration: "none" }}>Quản Trị</Link>
           </div>
-          <div style={{ fontSize: "0.825rem", color: "#64748b" }}>
-            © 2026 FER202 - Lab 06. Developed by Duykhobo.
+          <div style={{ fontSize: "0.8rem", color: "#6c7a71" }}>
+            FER202 - Lab 01 to Lab 06. Sinh viên thực hiện: Nguyễn Thanh Duy.
           </div>
         </div>
       </footer>

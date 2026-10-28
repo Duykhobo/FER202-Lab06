@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Agent tooling (local only)
+.agents/
+.taste-skill/

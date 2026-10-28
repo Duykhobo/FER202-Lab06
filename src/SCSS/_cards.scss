@@ -1,0 +1,338 @@
+// Cards, Specimen Grid, Filters & Pagination SCSS (Anti-Slop Botanical Layout)
+@use "variables" as *;
+@use "mixins" as *;
+
+.home-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+// Hero Section (Anti-slop: No Eyebrow, Max 2-line Headline, Confident Measure)
+.hero-section {
+  padding: 40px 0 32px;
+  max-width: 880px;
+
+  .hero-title {
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 680px;
+  }
+
+  .hero-search-bar {
+    position: relative;
+    max-width: 520px;
+
+    .hero-search-input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      font-size: 0.95rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color); /* taste-skill-ignore */
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      outline: none;
+      transition: $transition-bg;
+
+      &:focus {
+        border-color: var(--primary);
+      }
+    }
+
+    .hero-search-icon-svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-light);
+    }
+  }
+}
+
+// Category Tabs (Lab 4 - Tab component)
+.tabs-container {
+  @include flex(flex-start, center, row, 8px);
+  flex-wrap: wrap;
+  margin: 16px 0 28px;
+
+  .tab-btn {
+    padding: 7px 14px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color); /* taste-skill-ignore */
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: $transition-bg;
+
+    &:hover {
+      color: var(--text-main);
+      background: var(--bg-alt);
+    }
+
+    &.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+  }
+}
+
+// Section Header / Toolbar
+.section-header {
+  @include flex(space-between, flex-end, row);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light); /* taste-skill-ignore */
+
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .section-count {
+    display: block;
+    font-size: 0.825rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+}
+
+// 16 Orchids Grid (Lab 1)
+.orchids-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+
+  @include responsive(xl) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include responsive(md) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @include responsive(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Orchid Specimen Card (No Drop Shadows, Tone Steps, Botanical Elegance)
+.orchid-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color); /* taste-skill-ignore */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary);
+  }
+
+  .orchid-image-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background-color: var(--bg-alt);
+    cursor: pointer;
+
+    .orchid-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: $transition-transform;
+    }
+
+    &:hover .orchid-image {
+      transform: scale(1.04);
+    }
+
+    .orchid-price-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: #141b16;
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-xs);
+    }
+
+    .orchid-badges-left {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .badge-special {
+      background: #8c5d31; // Flat warm ochre
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-xs);
+      letter-spacing: 0.02em;
+    }
+
+    .badge-natural {
+      background: #1e4632; // Flat forest green
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-xs);
+      letter-spacing: 0.02em;
+    }
+  }
+
+  .orchid-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .orchid-category-origin {
+      @include flex(space-between, center);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .orchid-title {
+      font-family: $font-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      line-height: 1.3;
+      @include truncate-lines(1);
+    }
+
+    .orchid-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 14px;
+      flex: 1;
+      @include truncate-lines(2);
+    }
+
+    .orchid-meta-row {
+      @include flex(space-between, center);
+      padding: 8px 0;
+      border-top: 1px solid var(--border-light); /* taste-skill-ignore */
+      font-size: 0.8rem;
+      color: var(--text-muted);
+
+      .meta-rating {
+        color: #b45309;
+        font-weight: 600;
+      }
+
+      .meta-likes {
+        color: var(--text-main);
+        font-weight: 500;
+      }
+    }
+
+    .orchid-footer {
+      @include flex(space-between, center);
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-light); /* taste-skill-ignore */
+
+      .orchid-view-link {
+        font-size: 0.825rem;
+        font-weight: 600;
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.15s ease;
+
+        &:hover {
+          color: var(--primary-hover);
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Pagination
+.pagination-wrapper {
+  margin-top: 40px;
+  text-align: center;
+
+  .pagination-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color); /* taste-skill-ignore */
+
+    .pagination-btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 8px;
+      border-radius: var(--radius-xs);
+      border: 1px solid transparent; /* taste-skill-ignore */
+      background: transparent;
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.825rem;
+      cursor: pointer;
+      transition: $transition-bg;
+
+      &:hover:not(:disabled) {
+        background: var(--bg-alt);
+      }
+
+      &.active {
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .pagination-info {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+}

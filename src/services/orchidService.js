@@ -1,163 +1,90 @@
 import { API_URL } from "../config";
+import { ListOfOrchids } from "../ListOfOrchids";
 
-const INITIAL_ORCHIDS = [
-  {
-    id: "1",
-    name: "Lan Hồ Điệp Tím (Phalaenopsis)",
-    image: "https://images.unsplash.com/photo-1566993269603-7e1270446468?w=600&auto=format&fit=crop&q=80",
-    price: 35,
-    description: "Hoa lan Hồ Điệp tím quý phái, biểu tượng của sự thanh lịch và tài lộc, giữ hoa tươi lâu đến 2 tháng."
-  },
-  {
-    id: "2",
-    name: "Lan Cattleya Nữ Hoàng",
-    image: "https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=600&auto=format&fit=crop&q=80",
-    price: 55,
-    description: "Được mệnh danh là Nữ hoàng của các loài hoa lan với hương thơm quyến rũ và cánh hoa xòe rộng rực rỡ."
-  },
-  {
-    id: "3",
-    name: "Lan Hoàng Thảo (Dendrobium)",
-    image: "https://images.unsplash.com/photo-1618331835717-801e976710b2?w=600&auto=format&fit=crop&q=80",
-    price: 28,
-    description: "Dòng lan Dendrobium sinh trưởng mạnh mẽ, chùm hoa sum sê, nhiều màu sắc tươi tắn và rất dễ chăm sóc."
-  },
-  {
-    id: "4",
-    name: "Lan Vanda Xanh Lam Quý Hiếm",
-    image: "https://images.unsplash.com/photo-1534885320675-b08ab1314263?w=600&auto=format&fit=crop&q=80",
-    price: 60,
-    description: "Giống lan Vanda cao cấp với sắc xanh lam độc đáo, hệ rễ gió phát triển mạnh và thích khí hậu thoáng mát."
-  },
-  {
-    id: "5",
-    name: "Địa Lan Cymbidium Hoàng Hậu",
-    image: "https://images.unsplash.com/photo-1508615039623-a25605d2b022?w=600&auto=format&fit=crop&q=80",
-    price: 70,
-    description: "Địa lan thanh tao, lá thuôn dài mượt mà, chuỗi hoa rủ cong duyên dáng rất được ưa chuộng chưng Tết."
-  }
-];
-
-const LOCAL_STORAGE_KEY = "orchids_data_backup";
-
-function getLocalOrchids() {
-  const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-  if (!stored) {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(INITIAL_ORCHIDS));
-    return INITIAL_ORCHIDS;
-  }
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return INITIAL_ORCHIDS;
-  }
+// Chuẩn hóa một item hoa lan: đồng nhất định dạng các trường
+// (đảm bảo app luôn nhận dữ liệu đúng shape kể cả khi chạy offline).
+function normalizeOrchid(item, index = 0) {
+  const fallback = ListOfOrchids[index] || {};
+  return {
+    ...item,
+    id: String(item.id ?? fallback.id),
+    name: item.name || fallback.name || "Hoa Lan Quý",
+    image: item.image || fallback.image || "https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=800",
+    price: Number(item.price) || fallback.price || 0,
+    description: item.description || fallback.description || "Giống hoa lan quý phái, thanh khiết và mang nhiều ý nghĩa phong thủy tốt lành.",
+    rating: item.rating !== undefined ? Number(item.rating) : fallback.rating ?? 5,
+    isSpecial: Boolean(item.isSpecial ?? fallback.isSpecial ?? false),
+    isNatural: Boolean(item.isNatural ?? fallback.isNatural ?? true),
+    color: item.color || fallback.color || "pink",
+    numberOfLike: item.numberOfLike !== undefined ? Number(item.numberOfLike) : fallback.numberOfLike ?? 150,
+    origin: item.origin || fallback.origin || "Vietnam",
+    category: item.category || fallback.category || "Cattleya",
+    clip: item.clip || fallback.clip || "https://www.youtube.com/embed/41N69X1zZfg",
+  };
 }
 
-function saveLocalOrchids(data) {
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-}
-
-// Kiểm tra xem API URL có phải là link chết mặc định không
-function isDefaultDeadUrl(url) {
-  return !url || url.includes("an1904") || url.trim() === "";
-}
-
+// Lấy danh sách hoa lan: ưu tiên Fetch từ MockAPI,
+// fallback offline về ListOfOrchids.js (khi không có mạng).
 export async function getOrchids() {
-  if (!isDefaultDeadUrl(API_URL)) {
-    try {
-      const res = await fetch(API_URL);
-      if (res.ok) {
-        const data = await res.json();
-        return data;
-      }
-    } catch (err) {
-      console.warn("API error, falling back to local mock data:", err);
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`MockAPI trả về HTTP ${res.status} khi tải danh sách hoa lan`);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("Dữ liệu MockAPI không đúng định dạng danh sách");
+    return data.map((item, idx) => normalizeOrchid(item, idx));
+  } catch (err) {
+    if (err instanceof TypeError) {
+      // Lỗi mạng (không reach được MockAPI) -> dùng bộ dữ liệu chuẩn offline
+      return ListOfOrchids.map((item, idx) => normalizeOrchid(item, idx));
     }
+    throw err;
   }
-  return getLocalOrchids();
 }
 
 export async function getOrchidById(id) {
-  if (!isDefaultDeadUrl(API_URL)) {
-    try {
-      const res = await fetch(`${API_URL}/${id}`);
-      if (res.ok) {
-        return await res.json();
+  try {
+    const res = await fetch(`${API_URL}/${id}`);
+    if (res.status === 404) {
+      const notFound = await res.json().catch(() => ({}));
+      if (notFound.error === "Not found") {
+        throw new Error(`Không tìm thấy thông tin hoa lan với mã #${id} trên MockAPI`);
       }
-    } catch (err) {
-      console.warn("API error, falling back to local mock data:", err);
     }
+    if (!res.ok) throw new Error(`MockAPI trả về HTTP ${res.status} khi tải hoa lan #${id}`);
+    return normalizeOrchid(await res.json(), 0);
+  } catch (err) {
+    if (err instanceof TypeError) {
+      // Offline: tra cứu từ bộ dữ liệu chuẩn
+      const local = ListOfOrchids.find((item) => String(item.id) === String(id));
+      if (!local) throw new Error(`Không tìm thấy hoa lan #${id} khi hệ thống ngoại tuyến`);
+      return normalizeOrchid(local, 0);
+    }
+    throw err;
   }
-  const list = getLocalOrchids();
-  const found = list.find((item) => String(item.id) === String(id));
-  if (!found) throw new Error("Không tìm thấy thông tin hoa lan");
-  return found;
 }
 
 export async function createOrchid(orchidData) {
-  if (!isDefaultDeadUrl(API_URL)) {
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orchidData),
-      });
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (err) {
-      console.warn("API error, saving to local mock data:", err);
-    }
-  }
-  const list = getLocalOrchids();
-  const newItem = {
-    ...orchidData,
-    id: String(Date.now()),
-    price: Number(orchidData.price) || 0,
-  };
-  const updated = [newItem, ...list];
-  saveLocalOrchids(updated);
-  return newItem;
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orchidData),
+  });
+  if (!res.ok) throw new Error(`MockAPI trả về HTTP ${res.status} khi thêm hoa lan`);
+  return normalizeOrchid(await res.json(), 0);
 }
 
 export async function updateOrchid(id, orchidData) {
-  if (!isDefaultDeadUrl(API_URL)) {
-    try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orchidData),
-      });
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (err) {
-      console.warn("API error, updating local mock data:", err);
-    }
-  }
-  const list = getLocalOrchids();
-  const updated = list.map((item) =>
-    String(item.id) === String(id) ? { ...item, ...orchidData, id: String(id), price: Number(orchidData.price) || 0 } : item
-  );
-  saveLocalOrchids(updated);
-  return { ...orchidData, id: String(id) };
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orchidData),
+  });
+  if (!res.ok) throw new Error(`MockAPI trả về HTTP ${res.status} khi cập nhật hoa lan #${id}`);
+  return normalizeOrchid(await res.json(), 0);
 }
 
 export async function deleteOrchid(id) {
-  if (!isDefaultDeadUrl(API_URL)) {
-    try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        return true;
-      }
-    } catch (err) {
-      console.warn("API error, deleting from local mock data:", err);
-    }
-  }
-  const list = getLocalOrchids();
-  const filtered = list.filter((item) => String(item.id) !== String(id));
-  saveLocalOrchids(filtered);
+  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error(`MockAPI trả về HTTP ${res.status} khi xóa hoa lan #${id}`);
   return true;
 }

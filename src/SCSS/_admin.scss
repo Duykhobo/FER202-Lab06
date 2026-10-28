@@ -1,0 +1,253 @@
+// Admin Dashboard & Formik CRUD SCSS (Anti-Slop Clean App Screen)
+@use "variables" as *;
+@use "mixins" as *;
+
+.admin-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.admin-header {
+  @include flex(space-between, center, row);
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .admin-header-title {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .admin-header-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+}
+
+// Stats Cards Row (Flat Tone Steps, No Shadows at rest)
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+
+  @include responsive(md) {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color); /* taste-skill-ignore */
+    padding: 18px 20px;
+    @include flex(space-between, center, row);
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+      font-family: $font-serif;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+// Admin Form Card (Formik + Yup)
+.admin-form-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color); /* taste-skill-ignore */
+  padding: 24px;
+  margin-bottom: 32px;
+
+  .admin-form-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light); /* taste-skill-ignore */
+    @include flex(space-between, center);
+    color: var(--text-main);
+  }
+
+  .admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+
+    @include responsive(lg) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include responsive(sm) {
+      grid-template-columns: 1fr;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+      @include responsive(sm) {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+
+  .form-checkbox-row {
+    @include flex(flex-start, center, row, 24px);
+    margin: 14px 0;
+    flex-wrap: wrap;
+
+    .checkbox-item {
+      @include flex(flex-start, center, row, 8px);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-main);
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary);
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+// Admin Table Card (Data Table)
+.admin-table-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color); /* taste-skill-ignore */
+  overflow: hidden;
+
+  .admin-table-toolbar {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
+    @include flex(space-between, center, row, 16px);
+    flex-wrap: wrap;
+
+    .table-search-input {
+      min-width: 260px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color); /* taste-skill-ignore */
+      background: var(--bg-body);
+      color: var(--text-main);
+      outline: none;
+
+      &:focus {
+        border-color: var(--primary);
+      }
+    }
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+
+    th {
+      background: var(--bg-alt);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 16px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light); /* taste-skill-ignore */
+      vertical-align: middle;
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background-color: var(--bg-alt);
+    }
+
+    .admin-orchid-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-xs);
+      object-fit: cover;
+    }
+
+    .badge-price {
+      display: inline-block;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 6px;
+      border-radius: var(--radius-xs);
+    }
+
+    .action-buttons {
+      @include flex(flex-end, center, row, 6px);
+
+      .btn-icon {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: var(--radius-xs);
+        border: 1px solid var(--border-color); /* taste-skill-ignore */
+        cursor: pointer;
+        transition: $transition-bg;
+        background: var(--bg-card);
+        color: var(--text-main);
+
+        &.btn-edit:hover {
+          background: var(--primary-light);
+          color: var(--primary);
+          border-color: var(--primary);
+        }
+
+        &.btn-delete:hover {
+          background: var(--danger-light);
+          color: var(--danger);
+          border-color: var(--danger);
+        }
+
+        &.confirm {
+          background: var(--danger);
+          color: #ffffff;
+          border-color: var(--danger);
+          animation: confirm-pulse 1s ease-in-out infinite;
+
+          &:hover {
+            background: #8a2424;
+            border-color: #8a2424;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes confirm-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
