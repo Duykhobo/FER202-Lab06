@@ -1,12 +1,26 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getOrchidImage, handleImageError } from "../utils/imageHelper";
 
 export default function OrchidModal({ isOpen, orchid, onClose }) {
+  const dialogRef = useRef(null);
+
+  // Tự động cuộn lên đầu dialog modal khi mở chi tiết
+  useEffect(() => {
+    if (isOpen && dialogRef.current) {
+      dialogRef.current.scrollTop = 0;
+    }
+  }, [isOpen, orchid]);
+
   if (!isOpen || !orchid) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={dialogRef}
+        className="modal-dialog"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
         <div className="modal-header">
           <div>
@@ -93,7 +107,10 @@ export default function OrchidModal({ isOpen, orchid, onClose }) {
           </button>
           <Link
             to={`/detail/${orchid.id}`}
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            }}
             className="btn-primary"
           >
             Trang chi tiết đầy đủ

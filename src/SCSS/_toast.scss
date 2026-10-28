@@ -22,7 +22,7 @@
 }
 
 .toast {
-  @include flex(flex-start, center, row, 10px);
+  @include flex(flex-start, flex-start, row, 12px);
   background-color: var(--bg-card);
   color: var(--text-main);
   border: 1px solid var(--border-color);
@@ -40,6 +40,7 @@
   }
 
   &.toast-success {
+    border-left-color: var(--primary);
     .toast-icon { color: var(--primary); }
   }
 
@@ -47,10 +48,16 @@
     border-left-color: var(--secondary);
     .toast-icon { color: var(--secondary); }
   }
+
+  &.toast-confirm {
+    border-left-color: #d97706;
+    .toast-icon { color: #d97706; }
+  }
 }
 
 .toast-icon {
   flex-shrink: 0;
+  margin-top: 1px;
 
   svg {
     width: 18px;
@@ -59,9 +66,52 @@
   }
 }
 
-.toast-message {
+.toast-body {
   flex: 1;
-  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast-message {
+  line-height: 1.45;
+}
+
+.toast-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.toast-btn {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+
+  &-confirm {
+    background-color: var(--danger);
+    color: #ffffff;
+
+    &:hover {
+      background-color: #dc2626;
+      box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+    }
+  }
+
+  &-cancel {
+    background-color: var(--bg-alt);
+    border-color: var(--border-color);
+    color: var(--text-main);
+
+    &:hover {
+      background-color: var(--border-color);
+    }
+  }
 }
 
 .toast-close {
@@ -76,6 +126,7 @@
   cursor: pointer;
   border-radius: var(--radius-xs);
   transition: $transition-bg;
+  margin-top: -2px;
 
   &:hover {
     background-color: var(--bg-alt);

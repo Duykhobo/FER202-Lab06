@@ -11,6 +11,7 @@ export function useToast() {
       success: () => {},
       error: () => {},
       info: () => {},
+      confirm: () => {},
     };
   }
   return ctx;

@@ -1,5 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase/config";
 import { logout } from "../redux/authSlice";
 import { useTheme } from "../hooks/useTheme";
 import { useToast } from "../components/ToastContext";
@@ -13,10 +15,25 @@ export default function Navbar() {
   // Custom hook Toggle Dark/Light Theme (Lab 2 Requirement)
   const { toggleTheme, isDark } = useTheme();
 
+  // Toast xác nhận trước khi đăng xuất
   const handleLogout = () => {
-    dispatch(logout());
-    toast.info("Đã đăng xuất khỏi hệ thống!");
-    navigate("/");
+    toast.confirm(
+      "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?",
+      async () => {
+        try {
+          await signOut(auth);
+        } catch (err) {
+          console.warn("Lỗi khi đăng xuất Firebase Auth:", err);
+        }
+        dispatch(logout());
+        toast.success("Đăng xuất thành công! Hẹn gặp lại bạn.");
+        navigate("/");
+      },
+      {
+        confirmText: "Đăng Xuất",
+        cancelText: "Hủy",
+      }
+    );
   };
 
   return (

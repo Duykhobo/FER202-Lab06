@@ -64,7 +64,11 @@ export default function OrchidCard({ orchid, onOpenModal }) {
           <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 500 }}>
             Mã: #{orchid.id}
           </span>
-          <Link to={`/detail/${orchid.id}`} className="orchid-view-link">
+          <Link
+            to={`/detail/${orchid.id}`}
+            className="orchid-view-link"
+            onClick={() => window.scrollTo({ top: 0, left: 0, behavior: "smooth" })}
+          >
             Xem hồ sơ thực vật
           </Link>
         </div>

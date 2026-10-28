@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import Home from "./Pages/Home";
 import Natural from "./Pages/Natural";
 import Admin from "./Pages/Admin";
@@ -8,20 +9,60 @@ import Contact from "./Pages/Contact";
 import Detail from "./Pages/Detail";
 import Navbar from "./Pages/Navbar";
 import Login from "./Pages/login";
+import ScrollToTop from "./components/ScrollToTop";
+import { checkSession, validateAuthSession } from "./redux/authSlice";
 
-// ProtectedRoute kiểm tra quyền qua Redux Auth & localStorage (Lab 6)
+// ProtectedRoute kiểm tra quyền qua Redux Auth & Session Timestamp (Lab 6)
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isAdmin } = useSelector((state) => state.auth);
+  const location = useLocation();
+  const isSessionValid = validateAuthSession();
 
-  if (!isAuthenticated || !isAdmin) {
-    return <Navigate to="/login" replace />;
+  if (!isAuthenticated || !isAdmin || !isSessionValid) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          from: location.pathname,
+          reason: !isSessionValid ? "session_expired" : "unauthorized",
+        }}
+      />
+    );
   }
   return children;
 };
 
-function App() {
+function AppContent() {
+  const dispatch = useDispatch();
+
+  // Lắng nghe sự kiện storage để đồng bộ hóa trạng thái đăng xuất giữa các Tab trình duyệt
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (
+        e.key === "isAdmin" ||
+        e.key === "orchid_user" ||
+        e.key === "orchid_session_expires"
+      ) {
+        dispatch(checkSession());
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    // Kiểm tra định kỳ tính hợp lệ của session mỗi phút
+    const interval = setInterval(() => {
+      dispatch(checkSession());
+    }, 60000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [dispatch]);
+
   return (
-    <BrowserRouter>
+    <>
+      <ScrollToTop />
       <Navbar />
       <main className="main-content">
         <Routes>
@@ -65,6 +106,14 @@ function App() {
           </div>
         </div>
       </footer>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }

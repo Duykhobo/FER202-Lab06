@@ -23,6 +23,13 @@ const ICONS = {
       <line x1="12" y1="7.5" x2="12.01" y2="7.5" />
     </svg>
   ),
+  confirm: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  ),
 };
 
 export function ToastProvider({ children }) {
@@ -42,22 +49,96 @@ export function ToastProvider({ children }) {
     [dismiss]
   );
 
+  const showConfirm = useCallback(
+    (messageOrOptions, onConfirm, options = {}) => {
+      let message = messageOrOptions;
+      let confirmCb = onConfirm;
+      let opt = options;
+
+      if (typeof messageOrOptions === "object" && messageOrOptions !== null) {
+        message = messageOrOptions.message || "";
+        confirmCb = messageOrOptions.onConfirm;
+        opt = messageOrOptions;
+      }
+
+      const id = ++idRef.current;
+      const toastItem = {
+        id,
+        message,
+        type: "confirm",
+        onConfirm: confirmCb,
+        onCancel: opt.onCancel,
+        confirmText: opt.confirmText || "Xác nhận",
+        cancelText: opt.cancelText || "Hủy",
+      };
+
+      // Toast xác nhận giữ hiển thị trong 15s nếu người dùng chưa bấm để tránh biến mất quá nhanh
+      const duration = opt.duration ?? 15000;
+      setToasts((prev) => [...prev.slice(-3), toastItem]);
+      if (duration > 0) {
+        setTimeout(() => dismiss(id), duration);
+      }
+    },
+    [dismiss]
+  );
+
   const notify = {
     success: (msg) => showToast(msg, "success"),
     error: (msg) => showToast(msg, "error"),
     info: (msg) => showToast(msg, "info"),
+    confirm: (msg, onConfirm, options) => showConfirm(msg, onConfirm, options),
   };
 
   return (
     <ToastContext.Provider value={notify}>
       {children}
-      {/* Toast viewport - fixed, không cản thao tác người dùng */}
+      {/* Toast viewport - fixed, không cản trở thao tác */}
       <div className="toast-viewport" aria-live="polite">
         {toasts.map((toast) => (
           <div key={toast.id} className={`toast toast-${toast.type}`}>
             <span className="toast-icon">{ICONS[toast.type] || ICONS.info}</span>
-            <span className="toast-message">{toast.message}</span>
-            <button type="button" className="toast-close" onClick={() => dismiss(toast.id)} aria-label="Đóng thông báo">
+            <div className="toast-body">
+              <span className="toast-message">{toast.message}</span>
+              {toast.type === "confirm" && (
+                <div className="toast-actions">
+                  <button
+                    type="button"
+                    className="toast-btn toast-btn-confirm"
+                    onClick={() => {
+                      dismiss(toast.id);
+                      if (typeof toast.onConfirm === "function") {
+                        toast.onConfirm();
+                      }
+                    }}
+                  >
+                    {toast.confirmText}
+                  </button>
+                  <button
+                    type="button"
+                    className="toast-btn toast-btn-cancel"
+                    onClick={() => {
+                      dismiss(toast.id);
+                      if (typeof toast.onCancel === "function") {
+                        toast.onCancel();
+                      }
+                    }}
+                  >
+                    {toast.cancelText}
+                  </button>
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              className="toast-close"
+              onClick={() => {
+                dismiss(toast.id);
+                if (toast.type === "confirm" && typeof toast.onCancel === "function") {
+                  toast.onCancel();
+                }
+              }}
+              aria-label="Đóng thông báo"
+            >
               ×
             </button>
           </div>

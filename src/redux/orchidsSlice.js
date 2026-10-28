@@ -5,6 +5,7 @@ import {
   updateOrchid,
   deleteOrchid
 } from "../services/orchidService";
+import { validateAuthSession } from "./authSlice";
 
 // Async thunks cho CRUD API với MockAPI & Local Fallback
 export const fetchOrchids = createAsyncThunk(
@@ -19,9 +20,14 @@ export const fetchOrchids = createAsyncThunk(
   }
 );
 
+// Thao tác Thêm: Kiểm tra phiên làm việc trước khi thực hiện
 export const addOrchid = createAsyncThunk(
   "orchids/addOrchid",
-  async (orchidData, { rejectWithValue }) => {
+  async (orchidData, { getState, rejectWithValue }) => {
+    const { auth } = getState();
+    if (!validateAuthSession() || !auth.isAuthenticated || !auth.isAdmin) {
+      return rejectWithValue("Phiên làm việc đã kết thúc hoặc bạn đã đăng xuất. Vui lòng đăng nhập lại!");
+    }
     try {
       const created = await createOrchid(orchidData);
       return created;
@@ -31,9 +37,14 @@ export const addOrchid = createAsyncThunk(
   }
 );
 
+// Thao tác Sửa: Kiểm tra phiên làm việc trước khi thực hiện
 export const editOrchid = createAsyncThunk(
   "orchids/editOrchid",
-  async ({ id, orchidData }, { rejectWithValue }) => {
+  async ({ id, orchidData }, { getState, rejectWithValue }) => {
+    const { auth } = getState();
+    if (!validateAuthSession() || !auth.isAuthenticated || !auth.isAdmin) {
+      return rejectWithValue("Phiên làm việc đã kết thúc hoặc bạn đã đăng xuất. Vui lòng đăng nhập lại!");
+    }
     try {
       const updated = await updateOrchid(id, orchidData);
       return updated;
@@ -43,9 +54,14 @@ export const editOrchid = createAsyncThunk(
   }
 );
 
+// Thao tác Xóa: Kiểm tra phiên làm việc trước khi thực hiện
 export const removeOrchid = createAsyncThunk(
   "orchids/removeOrchid",
-  async (id, { rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
+    const { auth } = getState();
+    if (!validateAuthSession() || !auth.isAuthenticated || !auth.isAdmin) {
+      return rejectWithValue("Phiên làm việc đã kết thúc hoặc bạn đã đăng xuất. Vui lòng đăng nhập lại!");
+    }
     try {
       await deleteOrchid(id);
       return id;

@@ -14,6 +14,11 @@ export default function Detail() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Tự động cuộn mượt mà lên đầu trang khi vào trang chi tiết hoa lan
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, [id]);
+
   useEffect(() => {
     const fetchProduct = async () => {
       const foundInStore = reduxOrchids.find((item) => String(item.id) === String(id));
